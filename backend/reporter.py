@@ -21,7 +21,7 @@ class SalesReporter:
             'TitleStyle',
             parent=self.styles['Heading1'],
             fontSize=24,
-            textColor=colors.hexColor("#333333"),
+            textColor=colors.HexColor("#333333"),
             spaceAfter=30
         )
         elements.append(Paragraph("Satış Analiz Raporu", title_style))
