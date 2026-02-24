@@ -1,7 +1,7 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
+from reportlab.lib.colors import HexColor, grey, whitesmoke, beige, black
 import io
 import os
 
@@ -21,7 +21,7 @@ class SalesReporter:
             'TitleStyle',
             parent=self.styles['Heading1'],
             fontSize=24,
-            textColor=colors.HexColor("#333333"),
+            textColor=HexColor("#333333"),
             spaceAfter=30
         )
         elements.append(Paragraph("Satış Analiz Raporu", title_style))
@@ -41,13 +41,13 @@ class SalesReporter:
         
         t = Table(kpi_data, colWidths=[200, 200])
         t.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('BACKGROUND', (0, 0), (-1, 0), grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ('BACKGROUND', (0, 1), (-1, -1), beige),
+            ('GRID', (0, 0), (-1, -1), 1, black)
         ]))
         elements.append(t)
         elements.append(Spacer(1, 30))

@@ -20,7 +20,11 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "KPI Analiz API is running"}
+    return {
+        "message": "KPI Analiz API is running",
+        "version": "1.2",
+        "status": "healthy"
+    }
 
 # Global storage for analysis (in a real app, this would be a database or session)
 current_data = {"df": None}

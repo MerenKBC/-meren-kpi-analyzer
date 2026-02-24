@@ -80,7 +80,7 @@ function App() {
                     <div className="flex items-center gap-2 mt-1">
                         <p className="text-slate-400">Veri odaklı satış kararları alın.</p>
                         <span className="px-2 py-0.5 bg-slate-700 text-slate-400 text-[10px] rounded-full font-mono uppercase tracking-widest">
-                            v1.1 - Backend: Render
+                            v1.2 - Backend: Render
                         </span>
                     </div>
                 </div>
