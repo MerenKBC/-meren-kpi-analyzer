@@ -12,11 +12,15 @@ app = FastAPI()
 # Enable CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex="https?://.*", # Şimdilik her yerden erişime izin veriyoruz (including localhost)
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def root():
+    return {"message": "KPI Analiz API is running"}
 
 # Global storage for analysis (in a real app, this would be a database or session)
 current_data = {"df": None}
