@@ -54,19 +54,23 @@ async def upload_file(file: UploadFile = File(...)):
 @app.get("/report")
 async def get_report():
     if current_data["df"] is None:
-        raise HTTPException(status_code=404, detail="Önce veri yüklemelisiniz.")
+        raise HTTPException(status_code=404, detail="Oturumunuz sonlanmış veya veri henüz yüklenmemiş. Lütfen dosyayı tekrar yükleyin.")
     
-    analyzer = SalesAnalyzer(current_data["df"])
-    visualizer = SalesVisualizer(analyzer)
-    reporter = SalesReporter(analyzer, visualizer)
-    
-    pdf_content = reporter.generate_pdf()
-    
-    return Response(
-        content=pdf_content,
-        media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=satis_raporu.pdf"}
-    )
+    try:
+        analyzer = SalesAnalyzer(current_data["df"])
+        visualizer = SalesVisualizer(analyzer)
+        reporter = SalesReporter(analyzer, visualizer)
+        
+        pdf_content = reporter.generate_pdf()
+        
+        return Response(
+            content=pdf_content,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=satis_raporu.pdf"}
+        )
+    except Exception as e:
+        print(f"PDF Generation Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Rapor oluşturulurken hata: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

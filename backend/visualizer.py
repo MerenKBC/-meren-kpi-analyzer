@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg') # Required for headless servers like Render
 import matplotlib.pyplot as plt
 import io
 import base64

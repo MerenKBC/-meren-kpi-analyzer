@@ -46,15 +46,26 @@ function App() {
             link.remove()
         } catch (err) {
             console.error('Report download error:', err)
+
             if (err.response?.data instanceof Blob) {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    const errorData = JSON.parse(reader.result);
-                    alert(`Rapor indirilemez: ${errorData.detail || 'Bilinmeyen hata'}`);
+                    try {
+                        const errorData = JSON.parse(reader.result);
+                        alert(`Rapor indirilemez: ${errorData.detail || 'Sunucu hatası'}`);
+                    } catch (parseError) {
+                        // If not JSON, it might be a raw text error
+                        alert(`Rapor indirilirken bir hata oluştu (Sunucu Yanıtı: ${reader.result.substring(0, 100)})`);
+                    }
+                };
+                reader.onerror = () => {
+                    alert('Hata mesajı okunurken bir sorun oluştu.');
                 };
                 reader.readAsText(err.response.data);
+            } else if (err.code === 'ERR_NETWORK') {
+                alert('Sunucuya erişilemiyor. Lütfen internet bağlantınızı ve sunucu durumunu kontrol edin.');
             } else {
-                alert('Rapor indirilirken bir hata oluştu veya oturumunuz sonlandı (lütfen veriyi tekrar yükleyin).')
+                alert('Rapor indirilirken bir hata oluştu veya oturumunuz sonlandı (Lütfen veriyi tekrar yükleyip hemen indirmeyi deneyin).');
             }
         }
     }
