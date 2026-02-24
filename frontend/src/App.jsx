@@ -77,7 +77,12 @@ function App() {
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
                         KPI Analiz Sistemi
                     </h1>
-                    <p className="text-slate-400 mt-1">Veri odaklı satış kararları alın.</p>
+                    <div className="flex items-center gap-2 mt-1">
+                        <p className="text-slate-400">Veri odaklı satış kararları alın.</p>
+                        <span className="px-2 py-0.5 bg-slate-700 text-slate-400 text-[10px] rounded-full font-mono uppercase tracking-widest">
+                            v1.1 - Backend: Render
+                        </span>
+                    </div>
                 </div>
                 {data && (
                     <button
