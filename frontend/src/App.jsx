@@ -45,7 +45,17 @@ function App() {
             link.click()
             link.remove()
         } catch (err) {
-            alert('Rapor indirilirken bir hata oluştu.')
+            console.error('Report download error:', err)
+            if (err.response?.data instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const errorData = JSON.parse(reader.result);
+                    alert(`Rapor indirilemez: ${errorData.detail || 'Bilinmeyen hata'}`);
+                };
+                reader.readAsText(err.response.data);
+            } else {
+                alert('Rapor indirilirken bir hata oluştu veya oturumunuz sonlandı (lütfen veriyi tekrar yükleyin).')
+            }
         }
     }
 

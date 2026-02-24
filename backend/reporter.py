@@ -59,17 +59,19 @@ class SalesReporter:
         # Trend Chart
         elements.append(Paragraph("Satış Trendi", self.styles['Heading2']))
         trend_buf = io.BytesIO()
-        self.visualizer.save_to_file(trend_buf)
+        self.visualizer.save_trend_to_buf(trend_buf)
         trend_buf.seek(0)
-        elements.append(Image(trend_buf, width=400, height=250))
+        if trend_buf.getbuffer().nbytes > 0:
+            elements.append(Image(trend_buf, width=400, height=250))
         elements.append(Spacer(1, 30))
 
         # Category Chart
         elements.append(Paragraph("Kategori Analizi", self.styles['Heading2']))
         cat_buf = io.BytesIO()
-        self.visualizer.save_to_file(cat_buf) # This is a bit redundant but okay for demo
+        self.visualizer.save_category_to_buf(cat_buf)
         cat_buf.seek(0)
-        elements.append(Image(cat_buf, width=400, height=250))
+        if cat_buf.getbuffer().nbytes > 0:
+            elements.append(Image(cat_buf, width=400, height=250))
 
         doc.build(elements)
         buffer.seek(0)
