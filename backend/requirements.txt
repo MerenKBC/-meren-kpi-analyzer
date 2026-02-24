@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+matplotlib
+reportlab
+python-multipart
+openpyxl
+jinja2
+python-dotenv
