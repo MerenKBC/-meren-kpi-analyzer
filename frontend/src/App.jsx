@@ -3,6 +3,11 @@ import { Upload, BarChart3, FilePieChart, Download, Activity, FileText, CheckCir
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
 
+// API Base URL configuration
+const API_BASE_URL = window.location.hostname === 'localhost'
+    ? '/api'
+    : 'https://meren-kpi-analyzer.onrender.com';
+
 function App() {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -18,7 +23,7 @@ function App() {
         formData.append('file', file)
 
         try {
-            const response = await axios.post('/api/upload', formData)
+            const response = await axios.post(`${API_BASE_URL}/upload`, formData)
             setData(response.data)
         } catch (err) {
             setError('Dosya yüklenirken bir hata oluştu. Lütfen formatı kontrol edin.')
@@ -29,7 +34,7 @@ function App() {
 
     const downloadReport = async () => {
         try {
-            const response = await axios.get('/api/report', { responseType: 'blob' })
+            const response = await axios.get(`${API_BASE_URL}/report`, { responseType: 'blob' })
             const url = window.URL.createObjectURL(new Blob([response.data]))
             const link = document.createElement('a')
             link.href = url
