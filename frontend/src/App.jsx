@@ -26,7 +26,9 @@ function App() {
             const response = await axios.post(`${API_BASE_URL}/upload`, formData)
             setData(response.data)
         } catch (err) {
-            setError('Dosya yüklenirken bir hata oluştu. Lütfen formatı kontrol edin.')
+            console.error('Upload error:', err)
+            const serverError = err.response?.data?.detail || 'Dosya yüklenirken bir hata oluştu. Lütfen formatı kontrol edin.'
+            setError(serverError)
         } finally {
             setLoading(false)
         }
