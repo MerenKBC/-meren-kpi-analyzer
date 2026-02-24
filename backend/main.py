@@ -63,6 +63,7 @@ async def get_report():
         headers={"Content-Disposition": "attachment; filename=satis_raporu.pdf"}
     )
 
+if __name__ == "__main__":
     import uvicorn
     import os
     port = int(os.environ.get("PORT", 8000))
