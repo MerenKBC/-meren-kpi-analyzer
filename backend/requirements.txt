@@ -7,3 +7,11 @@ python-multipart
 openpyxl
 jinja2
 python-dotenv
+sqlalchemy
+psycopg2-binary
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+google-generativeai
+stripe
+requests

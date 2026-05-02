@@ -1,78 +1,62 @@
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.colors import HexColor, grey, whitesmoke, beige, black
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 import io
-import os
+import datetime
 
 class SalesReporter:
-    def __init__(self, analyzer, visualizer):
-        self.analyzer = analyzer
-        self.visualizer = visualizer
-        self.styles = getSampleStyleSheet()
-
-    def generate_pdf(self):
+    @staticmethod
+    def generate_pdf_report(org_name: str, kpis: dict, trends: list, insights: list):
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
         elements = []
 
         # Title
-        title_style = ParagraphStyle(
-            'TitleStyle',
-            parent=self.styles['Heading1'],
-            fontSize=24,
-            textColor=HexColor("#333333"),
-            spaceAfter=30
-        )
-        elements.append(Paragraph("Satış Analiz Raporu", title_style))
+        title = Paragraph(f"KPI Pilot Report: {org_name}", styles['Title'])
+        elements.append(title)
         elements.append(Spacer(1, 12))
 
-        # KPI Section
-        kpis = self.analyzer.get_kpis()
-        elements.append(Paragraph("Temel Performans Göstergeleri (KPI)", self.styles['Heading2']))
+        # Date
+        date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        elements.append(Paragraph(f"Generated on: {date_str}", styles['Normal']))
+        elements.append(Spacer(1, 24))
+
+        # KPI Summary Table
+        elements.append(Paragraph("KPI Summary", styles['Heading2']))
+        elements.append(Spacer(1, 12))
         
-        kpi_data = [
-            ["Metrik", "Değer"],
-            ["Toplam Gelir", f"₺{kpis['total_revenue']:,.2f}"],
-            ["Toplam Sipariş", kpis['total_orders']],
-            ["Ort. Sipariş Değeri", f"₺{kpis['avg_order_value']:,.2f}"],
-            ["Toplam Ürün Satışı", kpis['total_items']]
+        data = [
+            ["Metric", "Value"],
+            ["Total Revenue", f"₺{kpis.get('total_revenue', 0):,.2f}"],
+            ["Period", kpis.get('period', 'N/A')],
+            ["Total Data Points", str(kpis.get('metric_count', 0))]
         ]
         
-        t = Table(kpi_data, colWidths=[200, 200])
-        t.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), whitesmoke),
+        table = Table(data, colWidths=[200, 200])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), beige),
-            ('GRID', (0, 0), (-1, -1), 1, black)
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
         ]))
-        elements.append(t)
-        elements.append(Spacer(1, 30))
+        elements.append(table)
+        elements.append(Spacer(1, 24))
 
-        # Charts
-        # We need to save visualizer charts to temporary files because ReportLab Image needs a file/path or file-like object
-        # but the visualizer currently returns base64. Let's add a helper to save or use BytesIO.
-        
-        # Trend Chart
-        elements.append(Paragraph("Satış Trendi", self.styles['Heading2']))
-        trend_buf = io.BytesIO()
-        self.visualizer.save_trend_to_buf(trend_buf)
-        trend_buf.seek(0)
-        if trend_buf.getbuffer().nbytes > 0:
-            elements.append(Image(trend_buf, width=400, height=250))
-        elements.append(Spacer(1, 30))
-
-        # Category Chart
-        elements.append(Paragraph("Kategori Analizi", self.styles['Heading2']))
-        cat_buf = io.BytesIO()
-        self.visualizer.save_category_to_buf(cat_buf)
-        cat_buf.seek(0)
-        if cat_buf.getbuffer().nbytes > 0:
-            elements.append(Image(cat_buf, width=400, height=250))
+        # Insights Section
+        if insights:
+            elements.append(Paragraph("AI-Powered Insights", styles['Heading2']))
+            elements.append(Spacer(1, 12))
+            
+            for insight in insights[:5]: # Top 5 insights
+                elements.append(Paragraph(f"<b>Explain:</b> {insight.cause_explanation}", styles['Normal']))
+                elements.append(Paragraph(f"<i>Impact: {insight.impact_score}</i>", styles['Italic']))
+                elements.append(Spacer(1, 12))
 
         doc.build(elements)
         buffer.seek(0)
-        return buffer.read()
+        return buffer.getvalue()
